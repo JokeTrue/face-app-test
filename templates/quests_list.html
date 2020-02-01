@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <div class="box">
+        <div class="container">
+            <div class="row">
+                {% for team_quest in qr %}
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <div class="box-part text-left">
+                            <div class="title">
+                                <h4>{{ team_quest.quest.title }}</h4>
+                            </div>
+                            <hr>
+                            <div class="text">
+                                <span><b>Координаты:</b>{{ team_quest.quest.coords }}</span><br>
+                                <hr>
+                                <span><b>Описание:</b>{{ team_quest.quest.description }}</span><br>
+                                <hr>
+                                <span><b>Статус:</b>{{ team_quest.get_readable_status }}</span><br>
+                            </div>
+                            {% if team_quest.status == 'NOT_READY' %}
+                                <hr>
+                                <form method="POST" action="{% url 'quests' %}" class="answer">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="id" value="{{ team_quest.id }}">
+                                    <input type="hidden" name="quest" value="{{ team_quest.quest.id }}">
+                                    <input type="hidden" name="team" value="{{ team_quest.team.id }}">
+                                    <input type="hidden" name="hints" value="0">
+                                    <input type="text" class="answer" name="answer" id="answer" placeholder="Ответ">
+                                    <input type="submit" value="Отправить">
+                                </form>
+                                <div class="hints">
+                                    {% for hint in team_quest.quest.answers.all %}
+                                        <div class="hint">
+                                            <span class="open {% if forloop.counter0 != 0 %}blocked{% endif %}">Открыть подсказку</span>
+                                            <span class="text">{{ hint.text }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'quests_list.css' %}">
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'quests_list.js' %}"></script>
+{% endblock %}

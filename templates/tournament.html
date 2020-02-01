@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <main>
+        <div class="container mt-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h2 class="pt-3 pb-4 text-center font-bold font-up deep-purple-text">Турнир #1</h2>
+                            <h2 class="pt-3 pb-4 text-center font-bold font-up deep-purple-text">Начало: {{ tournament.created }}</h2>
+                            <h2 class="pt-3 pb-4 text-center font-bold font-up deep-purple-text">Конец: {{ tournament.end_time }}</h2>
+                        </div>
+                    </div>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Место</th>
+                            <th>Название</th>
+
+                            {% for quest in quests %}
+                                <th>Результат по заданию #{{ forloop.counter }}</th>
+                            {% endfor %}
+
+                            <th>Общее количество сданных заданий</th>
+                            <th>Суммарное штрафное время</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for team in teams %}
+                            <tr style="text-align: center;">
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{ team.name }}</td>
+                                {% for quest in quests %}
+                                    <td>
+                                        {% for team_quest in team.quests %}
+                                            {% if quest == team_quest.quest %}
+                                                {% if team_quest.status == 'FAILED' %}❌{% elif team_quest.status == 'READY' %}✅{% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                {% endfor %}
+                                <td>{{ team.total_done }}</td>
+                                <td>{{ team.time }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
